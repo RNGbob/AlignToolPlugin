@@ -18,32 +18,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		{
 			return GEditor->GetSelectedActors()->Num() != 0;
 		}
-		/*
-		static FReply OnButtonClick(FVector InOffset)
-		{
-			USelection* SelectedActors = GEditor->GetSelectedActors();
-
-			// Let editor know that we're about to do something that we want to undo/redo
-			GEditor->BeginTransaction(LOCTEXT("MoveActorsTransactionName", "MoveActors"));
-
-			// For each selected actor
-			for (FSelectionIterator Iter(*SelectedActors); Iter; ++Iter)
-			{
-				if (AActor* LevelActor = Cast<AActor>(*Iter))
-				{
-					// Register actor in opened transaction (undo/redo)
-					LevelActor->Modify();
-					// Move actor to given location
-					LevelActor->TeleportTo(LevelActor->GetActorLocation() + InOffset, FRotator(0, 0, 0));
-				}
-			}
-
-			// We're done moving actors so close transaction
-			GEditor->EndTransaction();
-
-			return FReply::Handled();
-		}*/
-
+		
 
 		static FReply OnButtonClick(FVector AllignAxisBools, FVector AllignRotationBool )
 		{
