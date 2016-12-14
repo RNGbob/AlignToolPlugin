@@ -5,7 +5,7 @@ By Robert Gentile
 ## How to install: ##
 * Download repository and unzip 
 * Access project you wish to add it to
-* In project directory create Plugins folder
+* In project directory create Plugins folder (if not already created)
 * Place downloaded plugin in Plugins folder
 * Restart Unreal
 * In Editor go to Edit->Plugins
