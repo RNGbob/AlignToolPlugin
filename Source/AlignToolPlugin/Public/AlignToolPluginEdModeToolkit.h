@@ -19,8 +19,14 @@ public:
 	virtual FText GetBaseToolkitName() const override;
 	virtual class FEdMode* GetEditorMode() const override;
 	virtual TSharedPtr<class SWidget> GetInlineContent() const override { return ToolkitWidget; }
-
+	TSharedPtr<class SEditableTextBox> testContent() const { return testwidgetptr; }
+	TSharedPtr<class SEditableTextBox> getAxisValue(FVector axisBool);
 private:
 
 	TSharedPtr<SWidget> ToolkitWidget;
+	TSharedPtr<SEditableTextBox> testwidgetptr;
+	TSharedPtr<SEditableTextBox> mXAxisBox;
+	TSharedPtr<SEditableTextBox> mYAxisBox;
+	TSharedPtr<SEditableTextBox> mZAxisBox;
+
 };
