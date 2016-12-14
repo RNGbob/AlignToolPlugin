@@ -147,20 +147,32 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 
 				]
 			+ SVerticalBox::Slot()
+				.AutoHeight()
+				.HAlign(HAlign_Center)
+				.Padding(10)
+				[
+					SNew(STextBlock)
+					.AutoWrapText(true)
+					.Text(LOCTEXT("Instruct1Label", "Align position to first selected Actor with or without an offset"))
+				]
+			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
+				.Padding(5)
 				[
 					SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot()
+					.Padding(1)
 					[
 						Locals::MakeButton(LOCTEXT("XAlignButtonLabel", "Align on the X Axis"), FVector(0, 1, 1), FVector(0, 0, 0),this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
+					.Padding(1)
 					[
 						SAssignNew(mXAxisBox, SEditableTextBox)
 						.MinDesiredWidth(100)
-						.HintText(LOCTEXT("xOffsetTextlabel", "seperation Offset"))
+						.HintText(LOCTEXT("xOffsetTextlabel", "Seperation Offset"))
 					]
 
 
@@ -168,49 +180,68 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
+				.Padding(5)
 				[
 					SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot()
+					.Padding(1)
 					[
 						Locals::MakeButton(LOCTEXT("YAlignButtonLabel", "Align on the Y Axis"), FVector(1, 0, 1), FVector(0, 0, 0), this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
+					.Padding(1)
 					[
 						SAssignNew(mYAxisBox, SEditableTextBox)
 						.MinDesiredWidth(100)
-						.HintText(LOCTEXT("yOffsetTextlabel", "seperation Offset"))
+						.HintText(LOCTEXT("yOffsetTextlabel", "Seperation Offset"))
 					]
 				]
+				
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
+				.Padding(5)
 				[
 					SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot()
+					.Padding(1)
 					[
 						Locals::MakeButton(LOCTEXT("ZAlignButtonLabel", "Align on the Z Axis"), FVector(1, 1, 0), FVector(0, 0, 0),this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
+					.Padding(1)
 					[
 						SAssignNew(mZAxisBox, SEditableTextBox)
 						.MinDesiredWidth(100)
-						.HintText(LOCTEXT("zOffsetTextlabel", "seperation Offset"))
+						.HintText(LOCTEXT("zOffsetTextlabel", "Seperation Offset"))
 					]
+				]
+			+ SVerticalBox::Slot()
+				.AutoHeight()
+				.HAlign(HAlign_Center)
+				.Padding(10)
+				[
+					SNew(STextBlock)
+					.AutoWrapText(true)
+				.Text(LOCTEXT("Instruct2Label", "Align rotation to first selected Actor or by preset rotation (360 for 0)"))
 				]
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
+				.Padding(5)
 				[
 					
 					SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot()
+				    .Padding(1)
 					[
 						Locals::MakeButton(LOCTEXT("XRotateButtonLabel", "Rotate on the X Axis"), FVector(0, 0, 0), FVector(1, 0, 0), this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
+					.Padding(1)
 					[
 						SAssignNew(mXAxisRot, SEditableTextBox)
 						.MinDesiredWidth(100)
@@ -220,15 +251,18 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
+				.Padding(5)
 				[
 					
 					SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot()
+					.Padding(1)
 					[
 						Locals::MakeButton(LOCTEXT("YRotateButtonLabel", "Rotate on the Y Axis"), FVector(0, 0, 0), FVector(0, 1, 0), this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
+					.Padding(1)
 					[
 						SAssignNew(mYAxisRot, SEditableTextBox)
 						.MinDesiredWidth(100)
@@ -238,15 +272,18 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
+				.Padding(5)
 				[
 					
 					SNew(SHorizontalBox)
 					+ SHorizontalBox::Slot()
+					.Padding(1)
 					[
 						Locals::MakeButton(LOCTEXT("ZRotateButtonLabel", "Rotate on the Z Axis"), FVector(0, 0, 0), FVector(0, 0, 1),this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
+					.Padding(1)
 					[
 						SAssignNew(mZAxisRot, SEditableTextBox)
 						.MinDesiredWidth(100)
