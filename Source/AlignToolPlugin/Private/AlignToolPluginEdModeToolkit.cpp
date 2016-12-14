@@ -1,4 +1,6 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+// Robert Gentile 2016 
+
 
 #include "AlignToolPluginPrivatePCH.h"
 #include "AlignToolPluginEdMode.h"
@@ -27,15 +29,28 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			AActor* baseActor = Cast<AActor>(SelectedActors->GetSelectedObject(0));// set first selected as base of allignment
 			FVector originPosBool = FVector(1, 1, 1) - AllignAxisBools;
 			FString offsetValueString = toolkit->getAxisValue(originPosBool)->GetText().ToString();
+			FString rotationValueString = toolkit->getRotValue(AllignRotationBool)->GetText().ToString();
+
 			float offsetValue = FCString::Atof(*offsetValueString);
-			//FString testText = toolkit->testContent()->GetText().ToString();
-			//float testfloat = FCString::Atof(*testText);
-			UE_LOG(LogTemp, Warning, TEXT("number be %f"), offsetValue);
+			float rotationValue = FCString::Atof(*rotationValueString);
+
+			bool dontRot =false;
+			//UE_LOG(LogTemp, Warning, TEXT("number be %f"), offsetValue);
 			
-			
+			// not offsetting boy
+			if (!AllignAxisBools.X && !AllignAxisBools.Y && !AllignAxisBools.Z)
+			{offsetValue = 0;}
+
+			// dont bother rotating
+			if ((!AllignRotationBool.X && !AllignRotationBool.Y && !AllignRotationBool.Z))
+			{
+				dontRot = true;
+			}
+
 			// Let editor know that we're about to do something that we want to undo/redo
 			GEditor->BeginTransaction(LOCTEXT("MoveActorsTransactionName", "AlignActors"));
 
+			int i = 0;
 			// For each selected actor
 			for (FSelectionIterator Iter(*SelectedActors); Iter; ++Iter)
 			{
@@ -43,23 +58,39 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 				{
 					LevelActor->Modify();
 
-					//if (LevelActor != baseActor)
-					//{
-						// returns the non transformed point bool
+					FVector newPos;
+						
+					if (offsetValue != 0 && i != 0)
+					{
+						// position is alligned axis and iterated offset from base actor
+						newPos = (baseActor->GetActorLocation() * AllignAxisBools) + (baseActor->GetActorLocation() * originPosBool)* i*offsetValue;
+					}
+					else
+					{
+						// position is aligned axis and original position of current actor
+						newPos = (baseActor->GetActorLocation() * AllignAxisBools) + (LevelActor->GetActorLocation() * originPosBool);
+					}
+						
+					FRotator newRot = LevelActor->GetActorRotation();
+					FRotator deltaRot;
 					
-						FVector newPos = (baseActor->GetActorLocation() * AllignAxisBools) + (LevelActor->GetActorLocation() * originPosBool);
-						FRotator newRot = LevelActor->GetActorRotation();
-					
+					if (!dontRot)
+					{
+						// are we setting rotation same as base actor or preset value?
+						if (rotationValue == 0)
+						{deltaRot = baseActor->GetActorRotation();}
+						else { deltaRot = FRotator(rotationValue, rotationValue, rotationValue); }
+
 						if (AllignRotationBool.X)
-						{newRot.Pitch = baseActor->GetActorRotation().Pitch;}
+						{newRot.Pitch = deltaRot.Pitch;}
 						else if (AllignRotationBool.Y)
-						{newRot.Roll = baseActor->GetActorRotation().Roll;}
+						{newRot.Roll = deltaRot.Roll;}
 						else if (AllignRotationBool.Z)
-						{newRot.Yaw = baseActor->GetActorRotation().Yaw;}
+						{newRot.Yaw = deltaRot.Yaw;}
+					}
 
-
-						LevelActor->TeleportTo(newPos, newRot, false, true);
-					//}
+					LevelActor->TeleportTo(newPos, newRot, false, true);
+					++i;
 				}
 				
 			}
@@ -109,7 +140,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					.AutoWidth()
 					[
 						SAssignNew(testwidgetptr,SEditableTextBox)
-						.MinDesiredWidth(120)
+						.MinDesiredWidth(100)
 						.HintText(LOCTEXT("TestTextlabel", "type numbers here fool"))
 					]
 					
@@ -128,7 +159,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					.AutoWidth()
 					[
 						SAssignNew(mXAxisBox, SEditableTextBox)
-						.MinDesiredWidth(120)
+						.MinDesiredWidth(100)
 						.HintText(LOCTEXT("xOffsetTextlabel", "seperation Offset"))
 					]
 
@@ -147,7 +178,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					.AutoWidth()
 					[
 						SAssignNew(mYAxisBox, SEditableTextBox)
-						.MinDesiredWidth(120)
+						.MinDesiredWidth(100)
 						.HintText(LOCTEXT("yOffsetTextlabel", "seperation Offset"))
 					]
 				]
@@ -164,7 +195,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					.AutoWidth()
 					[
 						SAssignNew(mZAxisBox, SEditableTextBox)
-						.MinDesiredWidth(120)
+						.MinDesiredWidth(100)
 						.HintText(LOCTEXT("zOffsetTextlabel", "seperation Offset"))
 					]
 				]
@@ -172,19 +203,55 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 				.HAlign(HAlign_Center)
 				.AutoHeight()
 				[
-					Locals::MakeButton(LOCTEXT("XRotateButtonLabel", "Rotate on the X Axis"), FVector(0, 0, 0), FVector(1, 0, 0), this)
+					
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					[
+						Locals::MakeButton(LOCTEXT("XRotateButtonLabel", "Rotate on the X Axis"), FVector(0, 0, 0), FVector(1, 0, 0), this)
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SAssignNew(mXAxisRot, SEditableTextBox)
+						.MinDesiredWidth(100)
+						.HintText(LOCTEXT("XRotationTextlabel", "Set Rotation"))
+					]
 				]
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
 				[
-					Locals::MakeButton(LOCTEXT("YRotateButtonLabel", "Rotate on the Y Axis"), FVector(0, 0, 0), FVector(0, 1, 0), this)
+					
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					[
+						Locals::MakeButton(LOCTEXT("YRotateButtonLabel", "Rotate on the Y Axis"), FVector(0, 0, 0), FVector(0, 1, 0), this)
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SAssignNew(mYAxisRot, SEditableTextBox)
+						.MinDesiredWidth(100)
+						.HintText(LOCTEXT("YRotationTextlabel", "Set Rotation"))
+					]
 				]
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
 				.AutoHeight()
 				[
-					Locals::MakeButton(LOCTEXT("ZRotateButtonLabel", "Rotate on the Z Axis"), FVector(0, 0, 0), FVector(0, 0, 1),this)
+					
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					[
+						Locals::MakeButton(LOCTEXT("ZRotateButtonLabel", "Rotate on the Z Axis"), FVector(0, 0, 0), FVector(0, 0, 1),this)
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SAssignNew(mZAxisRot, SEditableTextBox)
+						.MinDesiredWidth(100)
+						.HintText(LOCTEXT("ZRotationTextlabel", "Set Rotation"))
+					]
 				]
 
 		];
@@ -222,6 +289,23 @@ TSharedPtr<class SEditableTextBox> FAlignToolPluginEdModeToolkit::getAxisValue(F
 		return mZAxisBox;
 	}
 	
+	return TSharedPtr<class SEditableTextBox>();
+}
+
+TSharedPtr<class SEditableTextBox> FAlignToolPluginEdModeToolkit::getRotValue(FVector rotBool)
+{
+	if (rotBool.X)
+	{
+		return mXAxisRot;
+	}
+	else if (rotBool.Y)
+	{
+		return mYAxisRot;
+	}
+	else if (rotBool.Z)
+	{
+		return mZAxisRot;
+	}
 	return TSharedPtr<class SEditableTextBox>();
 }
 

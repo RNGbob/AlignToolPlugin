@@ -21,6 +21,7 @@ public:
 	virtual TSharedPtr<class SWidget> GetInlineContent() const override { return ToolkitWidget; }
 	TSharedPtr<class SEditableTextBox> testContent() const { return testwidgetptr; }
 	TSharedPtr<class SEditableTextBox> getAxisValue(FVector axisBool);
+	TSharedPtr<class SEditableTextBox> getRotValue(FVector rotBool);
 private:
 
 	TSharedPtr<SWidget> ToolkitWidget;
@@ -28,5 +29,8 @@ private:
 	TSharedPtr<SEditableTextBox> mXAxisBox;
 	TSharedPtr<SEditableTextBox> mYAxisBox;
 	TSharedPtr<SEditableTextBox> mZAxisBox;
+	TSharedPtr<SEditableTextBox> mXAxisRot;
+	TSharedPtr<SEditableTextBox> mYAxisRot;
+	TSharedPtr<SEditableTextBox> mZAxisRot;
 
 };
