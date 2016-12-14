@@ -22,6 +22,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			return GEditor->GetSelectedActors()->Num() != 0;
 		}
 		
+		
 
 		static FReply OnButtonClick(FVector AllignAxisBools, FVector AllignRotationBool, FAlignToolPluginEdModeToolkit* toolkit)
 		{
@@ -33,7 +34,6 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 
 			float offsetValue = FCString::Atof(*offsetValueString);
 			float rotationValue = FCString::Atof(*rotationValueString);
-
 			bool dontRot =false;
 			//UE_LOG(LogTemp, Warning, TEXT("number be %f"), offsetValue);
 			
@@ -63,7 +63,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					if (offsetValue != 0 && i != 0)
 					{
 						// position is alligned axis and iterated offset from base actor
-						newPos = (baseActor->GetActorLocation() * AllignAxisBools) + (baseActor->GetActorLocation() * originPosBool)* i*offsetValue;
+						newPos = (baseActor->GetActorLocation() * AllignAxisBools) + (baseActor->GetActorLocation() * originPosBool)+ (originPosBool*i*offsetValue);
 					}
 					else
 					{
@@ -102,10 +102,11 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		}
 		
 
-		static TSharedRef<SWidget> MakeButton(FText InLabel, const FVector AllignAxisBools, const FVector AllignRotationBool, FAlignToolPluginEdModeToolkit* toolkit)
+		static TSharedRef<SWidget> MakeButton(FText InLabel,FColor color, const FVector AllignAxisBools, const FVector AllignRotationBool, FAlignToolPluginEdModeToolkit* toolkit)
 		{
 			return SNew(SButton)
 				.Text(InLabel)
+				.ButtonColorAndOpacity(color)
 				.OnClicked_Static(&Locals::OnButtonClick, AllignAxisBools, AllignRotationBool, toolkit);
 		}
 
@@ -121,31 +122,13 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			.HAlign(HAlign_Center)
-			.Padding(50)
+			.Padding(20)
 			[
 				SNew(STextBlock)
 				.AutoWrapText(true)
-				.Text(LOCTEXT("HelperLabel", "AWWWW YEE BOSS CHECK THIS SHIT OUT"))
-			]
-			+ SVerticalBox::Slot()
-				.HAlign(HAlign_Center)
-				.AutoHeight()
-				[
-					SNew(SHorizontalBox)
-					+ SHorizontalBox::Slot()
-					[
-						Locals::MakeButton(LOCTEXT("TestButtonLabel", "Test"), FVector(0, 0, 0), FVector(0,0,0),this)
-					]
-					+SHorizontalBox::Slot()
-					.AutoWidth()
-					[
-						SAssignNew(testwidgetptr,SEditableTextBox)
-						.MinDesiredWidth(100)
-						.HintText(LOCTEXT("TestTextlabel", "type numbers here fool"))
-					]
-					
+				.Text(LOCTEXT("HelperLabel", "Select multiple Actors and press the button to perform each respective alignment. If text or no value in the adjacent text box Actors will align to the first selected Actor's values. Ctrl-Z to undo alignment"))
 
-				]
+			]
 			+ SVerticalBox::Slot()
 				.AutoHeight()
 				.HAlign(HAlign_Center)
@@ -164,7 +147,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					+ SHorizontalBox::Slot()
 					.Padding(1)
 					[
-						Locals::MakeButton(LOCTEXT("XAlignButtonLabel", "Align on the X Axis"), FVector(0, 1, 1), FVector(0, 0, 0),this)
+						Locals::MakeButton(LOCTEXT("XAlignButtonLabel", "Align on the X Axis"), FColor(255,70,70), FVector(0, 1, 1), FVector(0, 0, 0),this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
@@ -186,7 +169,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					+ SHorizontalBox::Slot()
 					.Padding(1)
 					[
-						Locals::MakeButton(LOCTEXT("YAlignButtonLabel", "Align on the Y Axis"), FVector(1, 0, 1), FVector(0, 0, 0), this)
+						Locals::MakeButton(LOCTEXT("YAlignButtonLabel", "Align on the Y Axis"), FColor(70, 255,70), FVector(1, 0, 1), FVector(0, 0, 0), this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
@@ -207,7 +190,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					+ SHorizontalBox::Slot()
 					.Padding(1)
 					[
-						Locals::MakeButton(LOCTEXT("ZAlignButtonLabel", "Align on the Z Axis"), FVector(1, 1, 0), FVector(0, 0, 0),this)
+						Locals::MakeButton(LOCTEXT("ZAlignButtonLabel", "Align on the Z Axis"), FColor(70, 140, 255), FVector(1, 1, 0), FVector(0, 0, 0),this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
@@ -225,7 +208,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 				[
 					SNew(STextBlock)
 					.AutoWrapText(true)
-				.Text(LOCTEXT("Instruct2Label", "Align rotation to first selected Actor or by preset rotation (360 for 0)"))
+				.Text(LOCTEXT("Instruct2Label", "Align rotation to first selected Actor or by preset rotation in degrees (360 for 0)"))
 				]
 			+ SVerticalBox::Slot()
 				.HAlign(HAlign_Center)
@@ -237,7 +220,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					+ SHorizontalBox::Slot()
 				    .Padding(1)
 					[
-						Locals::MakeButton(LOCTEXT("XRotateButtonLabel", "Rotate on the X Axis"), FVector(0, 0, 0), FVector(1, 0, 0), this)
+						Locals::MakeButton(LOCTEXT("XRotateButtonLabel", "Rotate on the X Axis"), FColor(255, 70, 70), FVector(0, 0, 0), FVector(1, 0, 0), this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
@@ -258,7 +241,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					+ SHorizontalBox::Slot()
 					.Padding(1)
 					[
-						Locals::MakeButton(LOCTEXT("YRotateButtonLabel", "Rotate on the Y Axis"), FVector(0, 0, 0), FVector(0, 1, 0), this)
+						Locals::MakeButton(LOCTEXT("YRotateButtonLabel", "Rotate on the Y Axis"), FColor(70, 255, 70), FVector(0, 0, 0), FVector(0, 1, 0), this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
@@ -279,7 +262,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 					+ SHorizontalBox::Slot()
 					.Padding(1)
 					[
-						Locals::MakeButton(LOCTEXT("ZRotateButtonLabel", "Rotate on the Z Axis"), FVector(0, 0, 0), FVector(0, 0, 1),this)
+						Locals::MakeButton(LOCTEXT("ZRotateButtonLabel", "Rotate on the Z Axis"), FColor(70, 140, 255), FVector(0, 0, 0), FVector(0, 0, 1),this)
 					]
 					+ SHorizontalBox::Slot()
 					.AutoWidth()
@@ -326,7 +309,7 @@ TSharedPtr<class SEditableTextBox> FAlignToolPluginEdModeToolkit::getAxisValue(F
 		return mZAxisBox;
 	}
 	
-	return TSharedPtr<class SEditableTextBox>();
+	return mXAxisRot;// anything as long as not uninitialized
 }
 
 TSharedPtr<class SEditableTextBox> FAlignToolPluginEdModeToolkit::getRotValue(FVector rotBool)
@@ -343,7 +326,7 @@ TSharedPtr<class SEditableTextBox> FAlignToolPluginEdModeToolkit::getRotValue(FV
 	{
 		return mZAxisRot;
 	}
-	return TSharedPtr<class SEditableTextBox>();
+	return mXAxisRot;
 }
 
 #undef LOCTEXT_NAMESPACE

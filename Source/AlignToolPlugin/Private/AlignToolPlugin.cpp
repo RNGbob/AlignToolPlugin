@@ -8,7 +8,7 @@
 void FAlignToolPluginModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	FEditorModeRegistry::Get().RegisterMode<FAlignToolPluginEdMode>(FAlignToolPluginEdMode::EM_AlignToolPluginEdModeId, LOCTEXT("AlignToolPluginEdModeName", "AlignToolPluginEdMode"), FSlateIcon(), true);
+	FEditorModeRegistry::Get().RegisterMode<FAlignToolPluginEdMode>(FAlignToolPluginEdMode::EM_AlignToolPluginEdModeId, LOCTEXT("AlignToolPluginEdModeName", "AlignToolPlugin"), FSlateIcon(), true);
 }
 
 void FAlignToolPluginModule::ShutdownModule()
