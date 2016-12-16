@@ -21,8 +21,7 @@ void FAlignToolPluginEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		{
 			return GEditor->GetSelectedActors()->Num() != 0;
 		}
-		
-		
+	
 
 		static FReply OnButtonClick(FVector AllignAxisBools, FVector AllignRotationBool, FAlignToolPluginEdModeToolkit* toolkit)
 		{

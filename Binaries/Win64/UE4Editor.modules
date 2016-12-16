@@ -1,8 +1,8 @@
 {
 	"Changelist" : 3142249,
-	"BuildId" : "f11a6fdb-7659-4fe9-8047-bd9be7a46e9f",
+	"BuildId" : "01d3b7d1-3ab8-49d9-b147-9c3561708a87",
 	"Modules" : 
 	{
-		"AlignToolPlugin" : "UE4Editor-AlignToolPlugin-825.dll"
+		"AlignToolPlugin" : "UE4Editor-AlignToolPlugin.dll"
 	}
 }
